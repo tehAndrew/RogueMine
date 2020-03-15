@@ -3,6 +3,9 @@ extends Node2D
 class_name Grid
 
 var nodes = []
+var timer = 0
+var p = 0
+var player = null
 
 func _ready():
 	set_position(Vector2(0, 0))
@@ -13,20 +16,20 @@ func _ready():
 	for y in range(0,16):
 		var row = []
 		for x in range(0,16):
-			var node : GridNode = GridNode.new()
-			node.set_position(Vector2(32 * x + 16, 32 * y + 16))
+			var node : GridNode = GridNode.new(Vector2(32 * x + 16, 32 * y + 16))
 			node.uncover()
 			add_child(node)
 			row.append(node)
 		nodes.append(row)
 	
-	for y in range(0,16):
-		for x in range(0,16):
-			if (x % 2 == 0):
-				var mine = mine_class.instance()
-				add_child(mine)
-				nodes[y][x].place_object(mine)
-			else:
-				var player = player_class.instance()
-				add_child(player)
-				nodes[y][x].place_object(player)
+	player = player_class.instance()
+	nodes[0][0].place_object(player)
+
+func _process(delta):
+	if (timer >= 1):
+		nodes[p][0].take_object(player)
+		p = (p+1)%16
+		nodes[p][0].place_object(player)
+		timer = 0;
+	timer += delta
+
