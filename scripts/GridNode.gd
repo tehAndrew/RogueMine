@@ -9,12 +9,14 @@ class_name GridNode
 # Private members
 var _covered : bool
 var _grid_object_arr : Array
+var _size : Vector2
 
 # Constructor.
-func _init(pos : Vector2 = Vector2(0, 0)):
+func _init(pos : Vector2 = Vector2(0, 0), size : Vector2 = Vector2(0, 0)):
 	_grid_object_arr = []
-	set_position(pos)
 	_covered = true
+	_size = size
+	set_position(pos)
 
 # Uncover node, all contained objects will become visible. There is no need to cover the node 
 # again because of the nature of minesweeper.
@@ -29,6 +31,8 @@ func place_object(grid_object : GridObject) -> void:
 		grid_object.cover()
 	else:
 		grid_object.uncover()
+	
+	grid_object.resize_sprite(_size)
 	
 	add_child(grid_object)
 	_grid_object_arr.append(grid_object)
