@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scenes/GridObjects/GridObject.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/player_placeholder.png" type="Texture" id=2]
+
+[node name="GridObject" instance=ExtResource( 1 )]
+editor/display_folded = true
+type = "Player"
+
+[node name="Sprite" parent="." index="0"]
+texture = ExtResource( 2 )
