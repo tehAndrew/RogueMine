@@ -12,7 +12,7 @@ _global_script_classes=[ {
 "base": "Node2D",
 "class": "Grid",
 "language": "GDScript",
-"path": "res://scenes/Grid.gd"
+"path": "res://scripts/Grid.gd"
 }, {
 "base": "Node2D",
 "class": "GridNode",
