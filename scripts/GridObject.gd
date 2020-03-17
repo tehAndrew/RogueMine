@@ -7,12 +7,22 @@ class_name GridObject
 
 const SPRITE_INDX = 0
 
-# Private member
-export (String) var type setget , get_type;
+# Exports
+export (String) var type setget , get_type
+
+# Private members
+var _pos : Vector2 setget set_pos, get_pos
+
+# Setters
+func set_pos(pos : Vector2) -> void:
+	_pos = pos
 
 # Getters
 func get_type() -> String:
-	return type;
+	return type
+	
+func get_pos() -> Vector2:
+	return _pos
 
 # Hide sprite.
 func cover() -> void:

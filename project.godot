@@ -23,11 +23,17 @@ _global_script_classes=[ {
 "class": "GridObject",
 "language": "GDScript",
 "path": "res://scripts/GridObject.gd"
+}, {
+"base": "GridObject",
+"class": "Player",
+"language": "GDScript",
+"path": "res://scripts/Player.gd"
 } ]
 _global_script_class_icons={
 "Grid": "",
 "GridNode": "",
-"GridObject": ""
+"GridObject": "",
+"Player": ""
 }
 
 [application]

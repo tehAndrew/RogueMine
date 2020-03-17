@@ -18,6 +18,12 @@ func _init(pos : Vector2 = Vector2(0, 0), size : Vector2 = Vector2(0, 0)):
 	_size = size
 	set_position(pos)
 
+# Private helpers
+func _grid_pos() -> Vector2:
+	# All grid nodes in the same grid are of the same size. Therefore _size can be used to
+	# get the position the grid node has in the grid.
+	return Vector2(floor(position.x / _size.x), floor(position.y / _size.y))
+
 # Uncover node, all contained objects will become visible. There is no need to cover the node 
 # again because of the nature of minesweeper.
 func uncover() -> void:
@@ -32,6 +38,9 @@ func place_object(grid_object : GridObject) -> void:
 	else:
 		grid_object.uncover()
 	
+	# All grid nodes in the same grid will have the same size, therefore size can be used to
+	# to get grid position.
+	grid_object.set_pos(_grid_pos())
 	grid_object.resize_sprite(_size)
 	
 	add_child(grid_object)
