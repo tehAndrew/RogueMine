@@ -1,6 +1,8 @@
 # RogueMine
 Roguelike x Minesweeper
 
+Latest build: https://tehandrew.github.io/RogueMine/
+
 ## Todo list
 - ~Before grid class~
   - ~Grid objects should be childnodes of grid nodes instead of the grid.~
