@@ -4,7 +4,7 @@ Roguelike x Minesweeper
 ## Todo list
 - ~Before grid class~
   - ~Grid objects should be childnodes of grid nodes instead of the grid.~
-- Make player movable in the grid
+- ~Make player movable in the grid~
 - Create a tileset for the nodes two states, covered and uncovered.
 - Grid generation
   1. Create grid generator that can generate empty grids with just a player in them
