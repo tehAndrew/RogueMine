@@ -13,6 +13,7 @@ var _grid_node_arr : Array
 # temp
 func _ready() -> void:
 	init(Vector2(0, 0), Vector2(512, 512), Vector2(16, 16))
+	$GridTileMap.init(_cell_size)
 	_generate_grid_node_arr()
 	spawn_player(Vector2(5, 2))
 
@@ -28,11 +29,15 @@ func _generate_grid_node_arr() -> void:
 			grid_node = GridNode.instance()
 			cell_pos = Vector2(_cell_size.x * x + _cell_size.x / 2, _cell_size.y * y + _cell_size.y / 2)
 			grid_node.init(cell_pos, _cell_size)
-			grid_node.uncover() # TEMP
 			col.append(grid_node)
 			add_child(grid_node)
+			$GridTileMap.set_cellv(Vector2(x, y), 0)
 			
 		_grid_node_arr.append(col)
+
+func _uncover(pos : Vector2) -> void:
+	_grid_node_arr[pos.x][pos.y].uncover()
+	$GridTileMap.set_cellv(pos, 1)
 
 # Constructor
 func init(pos : Vector2, size : Vector2, cell_amount : Vector2) -> void:
@@ -45,9 +50,10 @@ func spawn_player(var pos : Vector2):
 	var player : Node = Player.instance()
 	player.init(_cell_size)
 	_grid_node_arr[pos.x][pos.y].place_object(player)
+	_uncover(pos)
 	player.connect("request_movement", self, "_on_Player_request_movement")
 
-func _on_Player_request_movement(direction : String, obj_id : Node):
+func _on_Player_request_movement(direction : String, obj_id : Node) -> void:
 	var obj_pos = obj_id.get_pos()
 	
 	match direction:
@@ -55,18 +61,22 @@ func _on_Player_request_movement(direction : String, obj_id : Node):
 			if (obj_pos.x + 1 < _cell_amount.x):
 				_grid_node_arr[obj_pos.x][obj_pos.y].take_object(obj_id)
 				_grid_node_arr[obj_pos.x + 1][obj_pos.y].place_object(obj_id)
+				_uncover(Vector2(obj_pos.x + 1, obj_pos.y))
 		"left":
 			if (obj_pos.x - 1 >= 0):
 				_grid_node_arr[obj_pos.x][obj_pos.y].take_object(obj_id)
 				_grid_node_arr[obj_pos.x - 1][obj_pos.y].place_object(obj_id)
+				_uncover(Vector2(obj_pos.x - 1, obj_pos.y))
 		"down":
 			if (obj_pos.y + 1 < _cell_amount.y):
 				_grid_node_arr[obj_pos.x][obj_pos.y].take_object(obj_id)
 				_grid_node_arr[obj_pos.x][obj_pos.y + 1].place_object(obj_id)
+				_uncover(Vector2(obj_pos.x, obj_pos.y + 1))
 		"up":
 			if (obj_pos.y - 1 >= 0):
 				_grid_node_arr[obj_pos.x][obj_pos.y].take_object(obj_id)
 				_grid_node_arr[obj_pos.x][obj_pos.y - 1].place_object(obj_id)
+				_uncover(Vector2(obj_pos.x, obj_pos.y - 1))
 
 # Debug
 func _draw() -> void:
