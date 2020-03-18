@@ -1,40 +1,53 @@
 extends Node2D
 
-class_name Grid
+# Includes ---
+const Player = preload("res://scenes/GridObjects/Player.tscn")
+const GridNode = preload("res://scenes/GridNode.tscn")
 
+# Private members
 var _size : Vector2
 var _cell_amount : Vector2
 var _cell_size : Vector2
 var _grid_node_arr : Array
 
-# Will be a constructor later
-func _ready():
-	# Init
-	_size = Vector2(512, 512);
-	_cell_amount = Vector2(16, 16)
-	_cell_size = Vector2(_size.x / _cell_amount.x, _size.y / _cell_amount.y)
+# temp
+func _ready() -> void:
+	init(Vector2(0, 0), Vector2(512, 512), Vector2(16, 16))
 	_generate_grid_node_arr()
-	
-	# Place player - Temporary
-	var player = preload("res://scenes/GridObjects/Player.tscn").instance()
-	_grid_node_arr[0][0].place_object(player)
-	
-	# Connect signals
-	player.connect("request_movement", self, "_on_Player_request_movement")
+	spawn_player(Vector2(5, 2))
 
-# Helper function, private
+# Private helpers ---
 func _generate_grid_node_arr() -> void:
 	for x in range(0, _cell_amount.x):
-		var col = []
+		var grid_node : Node
+		var cell_pos : Vector2
+		var col : Array
+		
+		col = []
 		for y in range(0, _cell_amount.y):
-			var cell_pos = Vector2(_cell_size.x * x + _cell_size.x / 2, _cell_size.y * y + _cell_size.y / 2)
-			var grid_node = GridNode.new(cell_pos, _cell_size)
+			grid_node = GridNode.instance()
+			cell_pos = Vector2(_cell_size.x * x + _cell_size.x / 2, _cell_size.y * y + _cell_size.y / 2)
+			grid_node.init(cell_pos, _cell_size)
+			grid_node.uncover() # TEMP
 			col.append(grid_node)
 			add_child(grid_node)
-			grid_node.uncover() # temporary, all nodes will start covered
+			
 		_grid_node_arr.append(col)
 
-func _on_Player_request_movement(direction, obj_id):
+# Constructor
+func init(pos : Vector2, size : Vector2, cell_amount : Vector2) -> void:
+	set_position(pos)
+	_size = size
+	_cell_amount = cell_amount
+	_cell_size = Vector2(_size.x / _cell_amount.x, _size.y / _cell_amount.y)
+
+func spawn_player(var pos : Vector2):
+	var player : Node = Player.instance()
+	player.init(_cell_size)
+	_grid_node_arr[pos.x][pos.y].place_object(player)
+	player.connect("request_movement", self, "_on_Player_request_movement")
+
+func _on_Player_request_movement(direction : String, obj_id : Node):
 	var obj_pos = obj_id.get_pos()
 	
 	match direction:
@@ -56,7 +69,7 @@ func _on_Player_request_movement(direction, obj_id):
 				_grid_node_arr[obj_pos.x][obj_pos.y - 1].place_object(obj_id)
 
 # Debug
-func _draw():
+func _draw() -> void:
 	for x in range(1, _cell_amount.x):
 		for y in range(1, _cell_amount.y):
 			draw_circle (Vector2(x * _cell_size.x, y * _cell_size.y), 1, Color(0, 0, 0))

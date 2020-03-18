@@ -1,29 +1,27 @@
-# Class GridNode
+# Class GridNode ---
 # Container for the Grid class. Stores Grid objects. They are covered by default which means the
 # contained objects are not visible.
-
 extends Node2D
 
-class_name GridNode
-
-# Private members
+# Private members ---
 var _covered : bool
 var _grid_object_arr : Array
 var _size : Vector2
 
-# Constructor.
-func _init(pos : Vector2 = Vector2(0, 0), size : Vector2 = Vector2(0, 0)):
-	_grid_object_arr = []
-	_covered = true
-	_size = size
-	set_position(pos)
-
-# Private helpers
+# Private helpers ---
 func _grid_pos() -> Vector2:
 	# All grid nodes in the same grid are of the same size. Therefore _size can be used to
 	# get the position the grid node has in the grid.
 	return Vector2(floor(position.x / _size.x), floor(position.y / _size.y))
 
+# Constructor ---
+func init(pos : Vector2, size : Vector2) -> void:
+	_grid_object_arr = []
+	_covered = true
+	_size = size
+	set_position(pos)
+
+# Public methods ---
 # Uncover node, all contained objects will become visible. There is no need to cover the node 
 # again because of the nature of minesweeper.
 func uncover() -> void:
@@ -32,7 +30,7 @@ func uncover() -> void:
 		grid_object.uncover()
 
 # Contain an object within the node.
-func place_object(grid_object : GridObject) -> void:
+func place_object(grid_object : Node) -> void:
 	if (_covered):
 		grid_object.cover()
 	else:
@@ -41,15 +39,14 @@ func place_object(grid_object : GridObject) -> void:
 	# All grid nodes in the same grid will have the same size, therefore size can be used to
 	# to get grid position.
 	grid_object.set_pos(_grid_pos())
-	grid_object.resize_sprite(_size)
 	
 	add_child(grid_object)
 	_grid_object_arr.append(grid_object)
 
 # Remove the object from the node. The object should either be removed or placed in another node.
 # The object DOES NOT get removed.
-func take_object(grid_object : GridObject) -> GridObject:
-	var found_object : GridObject = null
+func take_object(grid_object : Node) -> Node:
+	var found_object : Node = null
 	var index : int = _grid_object_arr.find(grid_object)
 	
 	if (index != -1):

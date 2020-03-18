@@ -8,32 +8,9 @@
 
 config_version=4
 
-_global_script_classes=[ {
-"base": "Node2D",
-"class": "Grid",
-"language": "GDScript",
-"path": "res://scripts/Grid.gd"
-}, {
-"base": "Node2D",
-"class": "GridNode",
-"language": "GDScript",
-"path": "res://scripts/GridNode.gd"
-}, {
-"base": "Node2D",
-"class": "GridObject",
-"language": "GDScript",
-"path": "res://scripts/GridObject.gd"
-}, {
-"base": "GridObject",
-"class": "Player",
-"language": "GDScript",
-"path": "res://scripts/Player.gd"
-} ]
+_global_script_classes=[  ]
 _global_script_class_icons={
-"Grid": "",
-"GridNode": "",
-"GridObject": "",
-"Player": ""
+
 }
 
 [application]

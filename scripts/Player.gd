@@ -1,9 +1,15 @@
-extends GridObject
+# class Player ---
+# Contains the player sprite and handles the player movement.
+extends "res://scripts/GridObject.gd"
 
-class_name Player
-
+# Signals ---
 signal request_movement(direction, obj_id)
 
+# Constructor ---
+func init(var size : Vector2):
+	.init(size)
+
+# Update function ---
 func _process(delta):
 	if (Input.is_action_just_pressed("ui_right")):
 		emit_signal("request_movement", "right", self)
