@@ -13,9 +13,6 @@ var _grid_node_arr : Array
 # temp
 func _ready() -> void:
 	init(Vector2(0, 0), Vector2(512, 512), Vector2(16, 16))
-	$GridTileMap.init(_cell_size)
-	_generate_grid_node_arr()
-	spawn_player(Vector2(5, 2))
 
 # Private helpers ---
 func _generate_grid_node_arr() -> void:
@@ -45,6 +42,10 @@ func init(pos : Vector2, size : Vector2, cell_amount : Vector2) -> void:
 	_size = size
 	_cell_amount = cell_amount
 	_cell_size = Vector2(_size.x / _cell_amount.x, _size.y / _cell_amount.y)
+	
+	$GridTileMap.init(_cell_size)
+	_generate_grid_node_arr()
+	spawn_player(Vector2(5, 2))
 
 func spawn_player(var pos : Vector2):
 	var player : Node = Player.instance()
