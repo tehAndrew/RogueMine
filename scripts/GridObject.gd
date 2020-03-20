@@ -23,18 +23,16 @@ func _resize_sprite(size : Vector2) -> void:
 func init(size : Vector2) -> void:
 	_resize_sprite(size)
 
-# Setters ---
+# Public methods ---
 func set_pos(pos : Vector2) -> void:
 	_pos = pos
 
-# Getters ---
 func get_type() -> String:
 	return type
 	
 func get_pos() -> Vector2:
 	return _pos
 
-# Public methods ---
 # Hide sprite.
 func cover() -> void:
 	get_child(SPRITE_INDX).set_visible(false)

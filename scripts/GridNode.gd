@@ -7,6 +7,7 @@ extends Node2D
 var _covered : bool
 var _grid_object_arr : Array
 var _size : Vector2
+var _neighboring_mines : int
 
 # Private helpers ---
 func _grid_pos() -> Vector2:
@@ -19,15 +20,27 @@ func init(pos : Vector2, size : Vector2) -> void:
 	_grid_object_arr = []
 	_covered = true
 	_size = size
+	_neighboring_mines = 0
 	set_position(pos)
+	$NeighboringMineLabel.set_text(String(_neighboring_mines) if (_neighboring_mines > 0) else "")
+	$NeighboringMineLabel.hide()
 
 # Public methods ---
 # Uncover node, all contained objects will become visible. There is no need to cover the node 
 # again because of the nature of minesweeper.
 func uncover() -> void:
 	_covered = false
+	$NeighboringMineLabel.show()
 	for grid_object in _grid_object_arr:
 		grid_object.uncover()
+
+func register_neighboring_mine() -> void:
+	_neighboring_mines += 1
+	$NeighboringMineLabel.set_text(String(_neighboring_mines))
+
+func unregister_neighboring_mine() -> void:
+	_neighboring_mines -= 1
+	$NeighboringMineLabel.set_text(String(_neighboring_mines))
 
 # Contain an object within the node.
 func place_object(grid_object : Node) -> void:
