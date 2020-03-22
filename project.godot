@@ -16,7 +16,7 @@ _global_script_class_icons={
 [application]
 
 config/name="RogueMine"
-run/main_scene="res://scenes/Grid.tscn"
+run/main_scene="res://scenes/GridGenerator.tscn"
 config/icon="res://icon.png"
 
 [display]

@@ -11,10 +11,6 @@ var _cell_amount : Vector2
 var _cell_size : Vector2
 var _grid_node_arr : Array
 
-# temp
-func _ready() -> void:
-	init(Vector2(0, 0), Vector2(512, 512), Vector2(16, 16))
-
 # Private helpers ---
 func _generate_grid_node_arr() -> void:
 	for x in range(0, _cell_amount.x):
@@ -62,18 +58,8 @@ func init(pos : Vector2, size : Vector2, cell_amount : Vector2) -> void:
 	_size = size
 	_cell_amount = cell_amount
 	_cell_size = Vector2(_size.x / _cell_amount.x, _size.y / _cell_amount.y)
-	
 	_generate_grid_node_arr()
 	_init_tile_map()
-	spawn_mine(Vector2(5, 1))
-	spawn_mine(Vector2(7, 1))
-	spawn_mine(Vector2(0, 3))
-	spawn_mine(Vector2(1, 5))
-	spawn_mine(Vector2(4, 5))
-	spawn_mine(Vector2(7, 7))
-	spawn_mine(Vector2(8, 3))
-	spawn_mine(Vector2(8, 6))
-	spawn_player(Vector2(2, 2))
 
 func spawn_player(var pos : Vector2):
 	if (!_is_inside_grid(pos)):

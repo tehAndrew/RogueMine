@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=2]
+[gd_scene load_steps=3 format=2]
 
 [ext_resource path="res://scripts/GridNode.gd" type="Script" id=1]
 [ext_resource path="res://assets/mine_count_placeholder.png" type="Texture" id=2]
-[ext_resource path="res://scripts/MineCount.gd" type="Script" id=3]
 
 [node name="GridNode" type="Node2D"]
 script = ExtResource( 1 )
@@ -12,4 +11,3 @@ visible = false
 texture = ExtResource( 2 )
 vframes = 3
 hframes = 3
-script = ExtResource( 3 )
