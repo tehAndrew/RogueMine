@@ -1,7 +1,9 @@
 # RogueMine
 Roguelike x Minesweeper
 
-Latest build: https://tehandrew.github.io/RogueMine/
+__Random generated grids added. Press space to generate a new grid.__
+
+Build 5: https://tehandrew.github.io/RogueMine/
 
 ## Todo list
 - ~Before grid class~
@@ -13,10 +15,9 @@ Latest build: https://tehandrew.github.io/RogueMine/
   2. ~Generate mines~
   3. ~Prepare Grid and Grid generation for the algorithm below~
   4. ~Create the node uncover algorithm (bfs)~ dfs was used instead
-- Create a bitmapfont for the game
-- Create basic level generator
-  1. Random mine placement
-  2. Random character placement
+- ~Create basic level generator~
+  1. ~Random mine placement~
+  2. ~Random character placement~
 - Create basic gameplay
   1. Player dies in contact with mines
   2. Can generate new maps during gameplay
