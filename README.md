@@ -18,6 +18,7 @@ Build 5: https://tehandrew.github.io/RogueMine/
 - ~Create basic level generator~
   1. ~Random mine placement~
   2. ~Random character placement~
+- Make mine count resizable
 - Create basic gameplay
   1. Player dies in contact with mines
   2. Can generate new maps during gameplay
