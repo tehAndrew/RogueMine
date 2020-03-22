@@ -5,7 +5,7 @@ const Player = preload("res://scenes/GridObjects/Player.tscn")
 const Mine = preload("res://scenes/GridObjects/Mine.tscn")
 const GridNode = preload("res://scenes/GridNode.tscn")
 
-# Private members
+# Private members ---
 var _size : Vector2
 var _cell_amount : Vector2
 var _cell_size : Vector2
@@ -29,14 +29,18 @@ func _generate_grid_node_arr() -> void:
 			grid_node.init(cell_pos, _cell_size)
 			col.append(grid_node)
 			add_child(grid_node)
-			$GridTileMap.set_cellv(Vector2(x, y), 0)
+			get_node("GridTileMap").set_cellv(Vector2(x, y), 0)
 			
 		_grid_node_arr.append(col)
 
 func _uncover(pos : Vector2) -> void:
-	if (_grid_node_arr[pos.x][pos.y]._covered):
+	if (!_is_inside_grid(pos)):
+		push_error("Pos is outside of grid.")
+		get_tree().quit()
+	
+	if (_grid_node_arr[pos.x][pos.y].is_covered()):
 		_grid_node_arr[pos.x][pos.y].uncover()
-		$GridTileMap.set_cellv(pos, 1)
+		get_node("GridTileMap").set_cellv(pos, 1)
 		
 		if (_grid_node_arr[pos.x][pos.y]._neighboring_mines == 0):
 			for x_offset in range(-1, 2):
@@ -47,6 +51,11 @@ func _uncover(pos : Vector2) -> void:
 func _is_inside_grid(pos : Vector2) -> bool:
 	return pos.x >= 0 && pos.y >= 0 && pos.x < _cell_amount.x && pos.y < _cell_amount.y
 
+func _init_tile_map():
+	var x_scale : float = _cell_size.x / get_node("GridTileMap").cell_size.x
+	var y_scale : float = _cell_size.y / get_node("GridTileMap").cell_size.y
+	get_node("GridTileMap").set_scale(Vector2(x_scale, y_scale))
+
 # Constructor
 func init(pos : Vector2, size : Vector2, cell_amount : Vector2) -> void:
 	set_position(pos)
@@ -54,8 +63,8 @@ func init(pos : Vector2, size : Vector2, cell_amount : Vector2) -> void:
 	_cell_amount = cell_amount
 	_cell_size = Vector2(_size.x / _cell_amount.x, _size.y / _cell_amount.y)
 	
-	$GridTileMap.init(_cell_size)
 	_generate_grid_node_arr()
+	_init_tile_map()
 	spawn_mine(Vector2(5, 1))
 	spawn_mine(Vector2(7, 1))
 	spawn_mine(Vector2(0, 3))
@@ -90,7 +99,7 @@ func spawn_mine(var pos : Vector2):
 	for x_offset in range(-1, 2):
 		for y_offset in range(-1, 2):
 			if (!(x_offset == 0 && y_offset == 0) && _is_inside_grid(pos + Vector2(x_offset, y_offset))):
-				_grid_node_arr[pos.x + x_offset][pos.y + y_offset].register_neighboring_mine()
+				_grid_node_arr[pos.x + x_offset][pos.y + y_offset].inc_neighboring_mines()
 
 func _on_Player_request_movement(direction : String, obj_id : Node) -> void:
 	var obj_pos = obj_id.get_pos()
