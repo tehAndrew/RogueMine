@@ -21,7 +21,7 @@ Build 5: https://tehandrew.github.io/RogueMine/
 - Make mine count resizable
 - Create basic gameplay
   1. Player dies in contact with mines
-  2. Can generate new maps during gameplay
+  2. ~Can generate new maps during gameplay~
   
 ## Fix list 
 - ~Sprite should only be resized one time, not at every place_object~
