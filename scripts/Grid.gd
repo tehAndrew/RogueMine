@@ -25,18 +25,23 @@ func _generate_grid_node_arr() -> void:
 			grid_node.init(cell_pos, _cell_size)
 			col.append(grid_node)
 			add_child(grid_node)
-			get_node("GridTileMap").set_cellv(Vector2(x, y), 0)
+			get_node("GridTileMap").set_cell(x, y, 47)
+			get_node("GridTileMap").update_bitmask_area(Vector2(x, y))
 			
 		_grid_node_arr.append(col)
 
 func _uncover(pos : Vector2) -> void:
+	_uncover_rec(pos)
+
+func _uncover_rec(pos : Vector2) -> void:
 	if (!_is_inside_grid(pos)):
 		push_error("Pos is outside of grid.")
 		get_tree().quit()
 	
 	if (_grid_node_arr[pos.x][pos.y].is_covered()):
 		_grid_node_arr[pos.x][pos.y].uncover()
-		get_node("GridTileMap").set_cellv(pos, 1)
+		get_node("GridTileMap").set_cell(pos.x, pos.y, -1)
+		get_node("GridTileMap").update_bitmask_area(pos)
 		
 		if (_grid_node_arr[pos.x][pos.y]._neighboring_mines == 0):
 			for x_offset in range(-1, 2):

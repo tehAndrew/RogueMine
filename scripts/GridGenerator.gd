@@ -21,7 +21,7 @@ func generate() -> void:
 	_patch_amount = Vector2(4, 4)
 	_grid_size = _patch_amount * PATCH_SIZE
 	_mine_density = 2
-	_mine_density_offset = 1
+	_mine_density_offset = 0
 	
 	var patches : Array = []
 	
