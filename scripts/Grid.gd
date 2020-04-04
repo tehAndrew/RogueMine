@@ -25,15 +25,12 @@ func _generate_grid_node_arr() -> void:
 			grid_node.init(cell_pos, _cell_size)
 			col.append(grid_node)
 			add_child(grid_node)
-			get_node("GridTileMap").set_cell(x, y, 47)
+			get_node("GridTileMap").set_cell(x, y, 0)
 			get_node("GridTileMap").update_bitmask_area(Vector2(x, y))
 			
 		_grid_node_arr.append(col)
 
 func _uncover(pos : Vector2) -> void:
-	_uncover_rec(pos)
-
-func _uncover_rec(pos : Vector2) -> void:
 	if (!_is_inside_grid(pos)):
 		push_error("Pos is outside of grid.")
 		get_tree().quit()
@@ -57,7 +54,7 @@ func _init_tile_map():
 	var y_scale : float = _cell_size.y / get_node("GridTileMap").cell_size.y
 	get_node("GridTileMap").set_scale(Vector2(x_scale, y_scale))
 
-# Constructor
+# Constructor ---
 func init(pos : Vector2, size : Vector2, cell_amount : Vector2) -> void:
 	set_position(pos)
 	_size = size
@@ -66,22 +63,31 @@ func init(pos : Vector2, size : Vector2, cell_amount : Vector2) -> void:
 	_generate_grid_node_arr()
 	_init_tile_map()
 
+# Spawns a player at position pos. Terminates the program if the pos is out of
+# index range.
 func spawn_player(var pos : Vector2):
 	if (!_is_inside_grid(pos)):
 		push_error("Can't spawn player outside of grid.")
 		get_tree().quit()
 	
+	# Setup player object
 	var player : Node = Player.instance()
 	player.init(_cell_size)
 	_grid_node_arr[pos.x][pos.y].place_object(player)
+	
+	# Uncover all tiles surrounding the player
 	_uncover(pos)
+	
 	player.connect("request_movement", self, "_on_Player_request_movement")
 
+# Spawns a mine at position pos. Terminates the program if the pos is out of
+# index range.
 func spawn_mine(var pos : Vector2):
 	if (!_is_inside_grid(pos)):
 		push_error("Can't spawn mine outside of grid.")
 		get_tree().quit()
 	
+	# Setup mine object
 	var mine : Node = Mine.instance()
 	mine.init(_cell_size)
 	_grid_node_arr[pos.x][pos.y].place_object(mine)
@@ -92,27 +98,29 @@ func spawn_mine(var pos : Vector2):
 			if (!(x_offset == 0 && y_offset == 0) && _is_inside_grid(pos + Vector2(x_offset, y_offset))):
 				_grid_node_arr[pos.x + x_offset][pos.y + y_offset].inc_neighboring_mines()
 
+# Important, the implementation of this method is temporary
 func _on_Player_request_movement(direction : String, obj_id : Node) -> void:
-	var obj_pos = obj_id.get_pos()
+	var obj_new_pos : Vector2
+	
+	var obj_pos : Vector2 = obj_id.get_pos()
 	
 	match direction:
 		"right":
 			if (obj_pos.x + 1 < _cell_amount.x):
-				_grid_node_arr[obj_pos.x][obj_pos.y].take_object(obj_id)
-				_grid_node_arr[obj_pos.x + 1][obj_pos.y].place_object(obj_id)
-				_uncover(Vector2(obj_pos.x + 1, obj_pos.y))
+				obj_new_pos = Vector2(obj_pos.x + 1, obj_pos.y)
 		"left":
 			if (obj_pos.x - 1 >= 0):
-				_grid_node_arr[obj_pos.x][obj_pos.y].take_object(obj_id)
-				_grid_node_arr[obj_pos.x - 1][obj_pos.y].place_object(obj_id)
-				_uncover(Vector2(obj_pos.x - 1, obj_pos.y))
+				obj_new_pos = Vector2(obj_pos.x - 1, obj_pos.y)
 		"down":
 			if (obj_pos.y + 1 < _cell_amount.y):
-				_grid_node_arr[obj_pos.x][obj_pos.y].take_object(obj_id)
-				_grid_node_arr[obj_pos.x][obj_pos.y + 1].place_object(obj_id)
-				_uncover(Vector2(obj_pos.x, obj_pos.y + 1))
+				obj_new_pos = Vector2(obj_pos.x, obj_pos.y + 1)
 		"up":
 			if (obj_pos.y - 1 >= 0):
-				_grid_node_arr[obj_pos.x][obj_pos.y].take_object(obj_id)
-				_grid_node_arr[obj_pos.x][obj_pos.y - 1].place_object(obj_id)
-				_uncover(Vector2(obj_pos.x, obj_pos.y - 1))
+				obj_new_pos = Vector2(obj_pos.x, obj_pos.y - 1)
+	
+	if (_grid_node_arr[obj_new_pos.x][obj_new_pos.y].is_covered()):
+		_uncover(obj_new_pos)
+	else:
+		if (_grid_node_arr[obj_new_pos.x][obj_new_pos.y].get_object_types().empty()):
+			_grid_node_arr[obj_pos.x][obj_pos.y].take_object(obj_id)
+			_grid_node_arr[obj_new_pos.x][obj_new_pos.y].place_object(obj_id)

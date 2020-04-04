@@ -35,7 +35,6 @@ func generate() -> void:
 	add_child(grid)
 	
 	for patch in patches:
-		print(patch.pos)
 		for mine_local_pos in patch.spawn_pos_arr:
 			grid.spawn_mine(patch.pos * PATCH_SIZE + mine_local_pos)
 	grid.spawn_player(Vector2(1, 1))
