@@ -17,6 +17,7 @@ func _ready() -> void:
 	randomize()
 	generate()
 
+# Generate grid
 func generate() -> void:
 	_patch_amount = Vector2(4, 4)
 	_grid_size = _patch_amount * PATCH_SIZE
@@ -25,25 +26,61 @@ func generate() -> void:
 	
 	var patches : Array = []
 	
+	patches.append(generate_start_patch(Vector2(0, 0)))
+	patches.append(generate_end_patch(Vector2(_patch_amount.x - 1, _patch_amount.y - 1)))
+	
+	# Generate mine patches
 	for x in range(0, _patch_amount.x):
 		for y in range(0, _patch_amount.y):
 			if (Vector2(x, y) != Vector2(0, 0) && Vector2(x, y) != Vector2(_patch_amount.x - 1, _patch_amount.y - 1)):
 				patches.append(generate_mine_patch(Vector2(x, y)))
 	
+	# Create grid object
 	var grid : Node2D = Grid.instance()
 	grid.init(Vector2(0, 0), Vector2(512, 512), _grid_size)
 	add_child(grid)
 	
+	var uncover_pos_arr : Array = []
+	
+	# Spawn mines from the patches
 	for patch in patches:
-		for mine_local_pos in patch.spawn_pos_arr:
-			grid.spawn_mine(patch.pos * PATCH_SIZE + mine_local_pos)
-	grid.spawn_player(Vector2(1, 1))
+		match patch.type:
+			"start":
+				grid.spawn_player(patch.pos * PATCH_SIZE + patch.spawn_pos_arr[0])
+				uncover_pos_arr.append(patch.pos * PATCH_SIZE + patch.spawn_pos_arr[0])
+			"end":
+				grid.spawn_stairs(patch.pos * PATCH_SIZE + patch.spawn_pos_arr[0])
+				uncover_pos_arr.append(patch.pos * PATCH_SIZE + patch.spawn_pos_arr[0])
+			"mine":
+				for mine_local_pos in patch.spawn_pos_arr:
+					grid.spawn_mine(patch.pos * PATCH_SIZE + mine_local_pos)
+	
+	for uncover_pos in uncover_pos_arr:
+		grid.uncover(uncover_pos)
 
+func generate_start_patch(var pos : Vector2) -> Patch:
+	var patch : Patch = Patch.new()
+	patch.type = "start"
+	patch.pos = pos
+	patch.spawn_pos_arr = [Vector2(int(rand_range(1, _patch_amount.x - 1)), int(rand_range(1, _patch_amount.y - 1)))]
+	patch.uncover = true
+	return patch
+
+func generate_end_patch(var pos : Vector2) -> Patch:
+	var patch : Patch = Patch.new()
+	patch.type = "end"
+	patch.pos = pos
+	patch.spawn_pos_arr = [Vector2(int(rand_range(0, _patch_amount.x)), int(rand_range(0, _patch_amount.y)))]
+	patch.uncover = false
+	return patch
+
+# Generate a mine patch.
 func generate_mine_patch(var pos : Vector2) -> Patch:
 	var patch : Patch = Patch.new()
 	patch.type = "mine"
 	patch.pos = pos
 	patch.spawn_pos_arr = []
+	patch.uncover = false
 	
 	var mine_amount : int = _mine_density + int(rand_range(-_mine_density_offset, _mine_density_offset + 1))
 	
@@ -59,12 +96,19 @@ func generate_mine_patch(var pos : Vector2) -> Patch:
 	
 	return patch
 
+# TEMP
+func _draw() -> void:
+	draw_rect(Rect2(0, 0, 512, 512), Color(0.56, 0.34, 0.23))
+
+# TEMP
 func _process(var delta) -> void:
 	if (Input.is_action_just_pressed("ui_select")):
 		remove_child(get_child(0))
 		generate()
 
+# Inner classes
 class Patch:
 	var type : String
 	var pos : Vector2
 	var spawn_pos_arr : Array
+	var uncover : bool

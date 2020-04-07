@@ -8,4 +8,6 @@
 script = ExtResource( 2 )
 
 [node name="Sprite" parent="." index="0"]
+visible = true
 texture = ExtResource( 3 )
+offset = Vector2( 0, -16 )

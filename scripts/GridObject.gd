@@ -9,13 +9,6 @@ export (String) var type setget , get_type
 # Private members ---
 var _pos : Vector2 setget set_pos, get_pos
 
-# Constructor ---
-func init(size : Vector2) -> void:
-	var spr_rect = get_node("Sprite").get_rect()
-	var x_scale : float = size.x / spr_rect.size.x
-	var y_scale : float = size.y / spr_rect.size.y
-	set_scale(Vector2(x_scale, y_scale))
-
 # Public methods ---
 func set_pos(pos : Vector2) -> void:
 	_pos = pos

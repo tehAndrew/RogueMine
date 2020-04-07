@@ -5,10 +5,6 @@ extends "res://scripts/GridObject.gd"
 # Signals ---
 signal request_movement(direction, obj_id)
 
-# Constructor ---
-func init(var size : Vector2):
-	.init(size)
-
 # Update function ---
 func _process(delta):
 	if (Input.is_action_just_pressed("ui_right")):

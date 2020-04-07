@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=2]
+
+[ext_resource path="res://scenes/GridObjects/GridObject.tscn" type="PackedScene" id=1]
+[ext_resource path="res://assets/stairs_placeholder.png" type="Texture" id=2]
+
+[node name="Stairs" instance=ExtResource( 1 )]
+type = "stairs"
+
+[node name="Sprite" parent="." index="0"]
+texture = ExtResource( 2 )
