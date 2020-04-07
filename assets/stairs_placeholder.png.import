@@ -2,15 +2,15 @@
 
 importer="texture"
 type="StreamTexture"
-path="res://.import/tileset_tileset_placeholder.png-98168afdea641dec6de6993bf7c32b81.stex"
+path="res://.import/stairs_placeholder.png-bece7373ad8fc83b3cc4d57f3d58f57e.stex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/tileset_placeholder/tileset_tileset_placeholder.png"
-dest_files=[ "res://.import/tileset_tileset_placeholder.png-98168afdea641dec6de6993bf7c32b81.stex" ]
+source_file="res://assets/stairs_placeholder.png"
+dest_files=[ "res://.import/stairs_placeholder.png-bece7373ad8fc83b3cc4d57f3d58f57e.stex" ]
 
 [params]
 
