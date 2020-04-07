@@ -3,7 +3,7 @@ Roguelike x Minesweeper
 
 __Random generated grids added. Press space to generate a new grid.__
 
-Build 6: https://tehandrew.github.io/RogueMine/
+Build 7: https://tehandrew.github.io/RogueMine/
 
 ## Todo list
 - ~Before grid class~
@@ -18,7 +18,6 @@ Build 6: https://tehandrew.github.io/RogueMine/
 - ~Create basic level generator~
   1. ~Random mine placement~
   2. ~Random character placement~
-- Make mine count resizable
 - Create basic gameplay
   1. Player dies in contact with mines
   2. ~Can generate new maps during gameplay~
@@ -27,4 +26,4 @@ Build 6: https://tehandrew.github.io/RogueMine/
 ## Fix list 
 - ~Sprite should only be resized one time, not at every place_object~
 - ~Solve sub scene object creation problem for code consistency~
-- Clean up Grid class
+- Clean up all classes
