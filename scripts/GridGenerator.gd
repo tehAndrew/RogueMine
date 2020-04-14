@@ -22,18 +22,27 @@ func generate() -> void:
 	_patch_amount = Vector2(4, 4)
 	_grid_size = _patch_amount * PATCH_SIZE
 	_mine_density = 2
-	_mine_density_offset = 0
+	_mine_density_offset = 1
 	
-	var patches : Array = []
+	# Init patches array
+	var patch_matrix : Array = []
+	for x in range(_patch_amount.x):
+		var col = []
+		for y in range(_patch_amount.y):
+			col.append(null)
+		patch_matrix.append(col)
 	
-	patches.append(generate_start_patch(Vector2(0, 0)))
-	patches.append(generate_end_patch(Vector2(_patch_amount.x - 1, _patch_amount.y - 1)))
+	# Place start and end patches
+	var start_pos : Vector2 = _generate_start_pos()
+	var end_pos : Vector2 = _generate_end_pos(start_pos)
+	patch_matrix[start_pos.x][start_pos.y] = generate_single_object_patch("start", true)
+	patch_matrix[end_pos.x][end_pos.y] = generate_single_object_patch("end", false)
 	
 	# Generate mine patches
-	for x in range(0, _patch_amount.x):
-		for y in range(0, _patch_amount.y):
-			if (Vector2(x, y) != Vector2(0, 0) && Vector2(x, y) != Vector2(_patch_amount.x - 1, _patch_amount.y - 1)):
-				patches.append(generate_mine_patch(Vector2(x, y)))
+	for x in range(_patch_amount.x):
+		for y in range(_patch_amount.y):
+			if (patch_matrix[x][y] == null):
+				patch_matrix[x][y] = generate_mine_patch()
 	
 	# Create grid object
 	var grid : Node2D = Grid.instance()
@@ -43,42 +52,37 @@ func generate() -> void:
 	var uncover_pos_arr : Array = []
 	
 	# Spawn mines from the patches
-	for patch in patches:
-		match patch.type:
-			"start":
-				grid.spawn_player(patch.pos * PATCH_SIZE + patch.spawn_pos_arr[0])
-				uncover_pos_arr.append(patch.pos * PATCH_SIZE + patch.spawn_pos_arr[0])
-			"end":
-				grid.spawn_stairs(patch.pos * PATCH_SIZE + patch.spawn_pos_arr[0])
-				uncover_pos_arr.append(patch.pos * PATCH_SIZE + patch.spawn_pos_arr[0])
-			"mine":
-				for mine_local_pos in patch.spawn_pos_arr:
-					grid.spawn_mine(patch.pos * PATCH_SIZE + mine_local_pos)
+	for x in range(_patch_amount.x):
+		for y in range(_patch_amount.y):
+			var patch : Patch = patch_matrix[x][y]
+			var pos : Vector2 = Vector2(x, y)
+			
+			match patch.type:
+				"start":
+					grid.spawn_player(pos * PATCH_SIZE + patch.spawn_pos_arr[0])
+				"end":
+					grid.spawn_stairs(pos * PATCH_SIZE + patch.spawn_pos_arr[0])
+				"mine":
+					for mine_local_pos in patch.spawn_pos_arr:
+						grid.spawn_mine(pos * PATCH_SIZE + mine_local_pos)
+			
+			if (patch.uncover):
+				uncover_pos_arr.append(pos * PATCH_SIZE + patch.spawn_pos_arr[0])
 	
 	for uncover_pos in uncover_pos_arr:
 		grid.uncover(uncover_pos)
 
-func generate_start_patch(var pos : Vector2) -> Patch:
+func generate_single_object_patch(var type : String, var uncover : bool) -> Patch:
 	var patch : Patch = Patch.new()
-	patch.type = "start"
-	patch.pos = pos
+	patch.type =type
 	patch.spawn_pos_arr = [Vector2(int(rand_range(1, _patch_amount.x - 1)), int(rand_range(1, _patch_amount.y - 1)))]
-	patch.uncover = true
-	return patch
-
-func generate_end_patch(var pos : Vector2) -> Patch:
-	var patch : Patch = Patch.new()
-	patch.type = "end"
-	patch.pos = pos
-	patch.spawn_pos_arr = [Vector2(int(rand_range(0, _patch_amount.x)), int(rand_range(0, _patch_amount.y)))]
-	patch.uncover = false
+	patch.uncover = uncover
 	return patch
 
 # Generate a mine patch.
-func generate_mine_patch(var pos : Vector2) -> Patch:
+func generate_mine_patch() -> Patch:
 	var patch : Patch = Patch.new()
 	patch.type = "mine"
-	patch.pos = pos
 	patch.spawn_pos_arr = []
 	patch.uncover = false
 	
@@ -87,14 +91,40 @@ func generate_mine_patch(var pos : Vector2) -> Patch:
 	for i in range(0, mine_amount):
 		var found_spot : bool = false
 		while (!found_spot):
-			var rand_x : int = randi() % int(PATCH_SIZE.x - 1)
-			var rand_y : int = randi() % int(PATCH_SIZE.y - 1)
+			var rand_x : int = randi() % int(PATCH_SIZE.x)
+			var rand_y : int = randi() % int(PATCH_SIZE.y)
 			var rand_pos : Vector2 = Vector2(rand_x, rand_y)
 			if (!patch.spawn_pos_arr.has(rand_pos)):
 				patch.spawn_pos_arr.append(rand_pos)
 				found_spot = true
 	
 	return patch
+
+func _generate_start_pos() -> Vector2:
+	var pos_arr : Array
+	pos_arr.append(Vector2(0, 0))
+	pos_arr.append(Vector2(_patch_amount.x - 1, 0))
+	pos_arr.append(Vector2(0, _patch_amount.y - 1))
+	pos_arr.append(Vector2(_patch_amount.x - 1, _patch_amount.y - 1))
+	
+	return pos_arr[randi() % pos_arr.size()]
+
+func _generate_end_pos(start_pos : Vector2) -> Vector2:
+	var translation : Vector2 = (_patch_amount - Vector2(1, 1)) * 0.5
+	var rot_matrix : Transform2D = Transform2D(Vector2(-1, 0), Vector2(0, -1), Vector2(0, 0)) 
+	
+	start_pos -= translation
+	var trans_pos : Vector2 = rot_matrix.xform(start_pos)
+	trans_pos += translation
+	
+	var offset_x : int = randi() % int(_patch_amount.x)
+	var offset_y : int = randi() % int(_patch_amount.y)
+	
+	var pos_arr : Array
+	pos_arr.append(Vector2(int(trans_pos.x + offset_x) % int(_patch_amount.x), trans_pos.y))
+	pos_arr.append(Vector2(trans_pos.x, int(trans_pos.y + offset_y) % int(_patch_amount.y)))
+	
+	return pos_arr[randi() % pos_arr.size()]
 
 # TEMP
 func _draw() -> void:
@@ -109,6 +139,5 @@ func _process(var delta) -> void:
 # Inner classes
 class Patch:
 	var type : String
-	var pos : Vector2
 	var spawn_pos_arr : Array
 	var uncover : bool
